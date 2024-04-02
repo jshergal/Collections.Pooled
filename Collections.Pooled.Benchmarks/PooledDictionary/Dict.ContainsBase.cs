@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
+using System.Collections.Generic;
 
 namespace Collections.Pooled.Benchmarks.PooledDictionary
 {

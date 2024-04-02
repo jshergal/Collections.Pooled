@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Running;
 
 /* Powershell commands to shorten the benchmark output filenames:
 Get-ChildItem | Rename-Item -NewName {$_.name -replace 'Collections.Pooled.Benchmarks.PooledList.','' }

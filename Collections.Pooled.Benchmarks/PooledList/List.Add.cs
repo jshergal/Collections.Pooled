@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
+using System.Collections.Generic;
 
 namespace Collections.Pooled.Benchmarks.PooledList
 {
@@ -8,11 +8,10 @@ namespace Collections.Pooled.Benchmarks.PooledList
     // prevents us from running CoreJob with a CLR host, or ClrJob with a Core host.
     // When this is resolved, should change all the tests to run both job types at the same time.
 
-#if NETCOREAPP2_2
-    [CoreJob]
-#elif NET472
-    [ClrJob]
-#endif
+    [SimpleJob(RuntimeMoniker.Net472)]
+    [SimpleJob(RuntimeMoniker.Net60)]
+    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80)]
     [MemoryDiagnoser]
     public class List_Add : ListBase
     {

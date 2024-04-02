@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
+using System;
+using System.Collections.Generic;
 
 namespace Collections.Pooled.Benchmarks.PooledList
 {
-#if NETCOREAPP2_2
-    [CoreJob]
-#elif NET472
-    [ClrJob]
-#endif
+    [SimpleJob(RuntimeMoniker.Net472)]
+    [SimpleJob(RuntimeMoniker.Net60)]
+    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80)]
     [MemoryDiagnoser]
     public class List_Remove : ListBase
     {
         [IterationSetup(Target = nameof(ListRemove_Int))]
-        public void SetupListInt() 
+        public void SetupListInt()
             => listInt = new List<int>(intItems);
 
         [Benchmark(Baseline = true)]
@@ -65,7 +65,7 @@ namespace Collections.Pooled.Benchmarks.PooledList
         }
 
         [IterationSetup(Target = nameof(ListRemove_String))]
-        public void SetupListString() 
+        public void SetupListString()
             => listString = new List<string>(stringItems);
 
         [Benchmark]

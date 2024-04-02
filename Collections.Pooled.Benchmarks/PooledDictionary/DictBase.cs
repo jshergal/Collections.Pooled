@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Collections.Pooled.Benchmarks.PooledDictionary
 {
@@ -15,7 +14,7 @@ namespace Collections.Pooled.Benchmarks.PooledDictionary
             while (dict.Count < size)
             {
                 int key = rand.Next(500000, int.MaxValue);
-#if NETCOREAPP2_2
+#if NET8_0_OR_GREATER
                 dict.TryAdd(key, 0);
 #else
                 if (!dict.ContainsKey(key))

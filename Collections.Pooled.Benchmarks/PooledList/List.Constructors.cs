@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
+using System.Collections.Generic;
 
 namespace Collections.Pooled.Benchmarks.PooledList
 {
-#if NETCOREAPP2_2
-    [CoreJob]
-#elif NET472
-    [ClrJob]
-#endif
+    [SimpleJob(RuntimeMoniker.Net472)]
+    [SimpleJob(RuntimeMoniker.Net60)]
+    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80)]
     [MemoryDiagnoser]
     public class List_Constructors : ListBase
     {
-        [Benchmark(Baseline=true)]
+        [Benchmark(Baseline = true)]
         public void ListICollectionConstructor()
         {
             if (Type == ListType.Int)

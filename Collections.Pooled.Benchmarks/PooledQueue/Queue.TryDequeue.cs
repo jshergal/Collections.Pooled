@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
+using System;
+using System.Collections.Generic;
+using BenchmarkDotNet.Jobs;
 
 namespace Collections.Pooled.Benchmarks.PooledQueue
 {
-#if NETCOREAPP2_2
-    [CoreJob]
-#elif NET472
-    [ClrJob]
-#endif
+    [SimpleJob(RuntimeMoniker.Net472)]
+    [SimpleJob(RuntimeMoniker.Net60)]
+    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80)]
     [MemoryDiagnoser]
     public class Queue_TryDequeue : QueueBase
     {

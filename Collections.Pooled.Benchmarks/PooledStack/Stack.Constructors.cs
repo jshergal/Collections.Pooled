@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
+using System.Collections.Generic;
 
 namespace Collections.Pooled.Benchmarks.PooledStack
 {
-#if NETCOREAPP2_2
-    [CoreJob]
-#elif NET472
-    [ClrJob]
-#endif
+    [SimpleJob(RuntimeMoniker.Net472)]
+    [SimpleJob(RuntimeMoniker.Net60)]
+    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80)]
     [MemoryDiagnoser]
     public class Stack_Constructors : StackBase
     {
-        [Benchmark(Baseline=true)]
+        [Benchmark(Baseline = true)]
         public void StackICollectionConstructor()
         {
             if (Type == StackType.Int)
@@ -102,7 +101,7 @@ namespace Collections.Pooled.Benchmarks.PooledStack
 
         private IEnumerable<int> IntEnumerable()
         {
-            for (int i=0; i < N; i++)
+            for (int i = 0; i < N; i++)
                 yield return intArray[i];
         }
 

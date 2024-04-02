@@ -10,6 +10,10 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using Xunit;
 
+#if NET8_0_OR_GREATER
+using System.Collections.ObjectModel;
+#endif
+
 namespace Collections.Pooled.Tests
 {
     /// <summary>
@@ -591,6 +595,26 @@ namespace Collections.Pooled.Tests
                 Assert.Equal(firstValues[key], secondValues[key]);
         }
 
+        // .NET 8.0 introduced a change in the enumerator returned from a ReadOnlyCollection<T> when
+        // the underling list is empty. Now it returns SZGenericArrayEnumerator which will throw an
+        // InvalidOperattionException when accessing current before enumeration starts and after it has completed
+        // https://source.dot.net/System.Private.CoreLib/R/f7a38d1d13a03244.html 
+#if NET8_0_OR_GREATER
+        [Theory]
+        [MemberData(nameof(ValidCollectionSizes))]
+        public void IEnumerable_Generic_Enumerator_Current_BeforeFirstMoveNext_UndefinedBehavior(int count)
+        {
+            T current;
+            IEnumerable<T> enumerable = GenericIEnumerableFactory(count);
+            using (IEnumerator<T> enumerator = enumerable.GetEnumerator())
+            {
+                if (Enumerator_Current_UndefinedOperation_Throws || (count == 0 && enumerable is ReadOnlyCollection<T>))
+                    Assert.Throws<InvalidOperationException>(() => enumerator.Current);
+                else
+                    current = enumerator.Current;
+            }
+        }
+#else
         [Theory]
         [MemberData(nameof(ValidCollectionSizes))]
         public void IEnumerable_Generic_Enumerator_Current_BeforeFirstMoveNext_UndefinedBehavior(int count)
@@ -605,7 +629,29 @@ namespace Collections.Pooled.Tests
                     current = enumerator.Current;
             }
         }
+#endif
 
+        // .NET 8.0 introduced a change in the enumerator returned from a ReadOnlyCollection<T> when
+        // the underling list is empty. Now it returns SZGenericArrayEnumerator which will throw an
+        // InvalidOperattionException when accessing current before enumeration starts and after it has completed
+        // https://source.dot.net/System.Private.CoreLib/R/f7a38d1d13a03244.html 
+#if NET8_0_OR_GREATER
+        [Theory]
+        [MemberData(nameof(ValidCollectionSizes))]
+        public void IEnumerable_Generic_Enumerator_Current_AfterEndOfEnumerable_UndefinedBehavior(int count)
+        {
+            T current;
+            IEnumerable<T> enumerable = GenericIEnumerableFactory(count);
+            using (IEnumerator<T> enumerator = enumerable.GetEnumerator())
+            {
+                while (enumerator.MoveNext()) ;
+                if (Enumerator_Current_UndefinedOperation_Throws || (count == 0 && enumerable is ReadOnlyCollection<T>))
+                    Assert.Throws<InvalidOperationException>(() => enumerator.Current);
+                else
+                    current = enumerator.Current;
+            }
+        }
+#else
         [Theory]
         [MemberData(nameof(ValidCollectionSizes))]
         public void IEnumerable_Generic_Enumerator_Current_AfterEndOfEnumerable_UndefinedBehavior(int count)
@@ -621,6 +667,7 @@ namespace Collections.Pooled.Tests
                     current = enumerator.Current;
             }
         }
+#endif
 
         [Theory]
         [MemberData(nameof(ValidCollectionSizes))]
@@ -903,6 +950,7 @@ namespace Collections.Pooled.Tests
 
         #region Serialize
 
+#pragma warning disable SYSLIB0011 // BinaryFormatter is deprecated and should not be used
         [Theory]
         [MemberData(nameof(ValidCollectionSizes))]
         public void IEnumerable_Generic_Serialize_Deserialize(int count)
@@ -935,6 +983,7 @@ namespace Collections.Pooled.Tests
                 }
             }
         }
+#pragma warning restore SYSLIB0011
 
         #endregion
     }
